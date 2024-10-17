@@ -11,7 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.gson.annotations.SerializedName
 import com.hamza.ktor.ui.theme.KtorExampleTheme
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.gson.gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,28 +25,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             KtorExampleTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    KtorExampleTheme {
-        Greeting("Android")
+fun sendLetter(letter: Letter) {
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            gson()
+        }
     }
 }
+
+data class Letter(
+    @SerializedName("UserId") val userId: Int,
+    @SerializedName("title") val title: String,
+    @SerializedName("body") val body: String
+
+)

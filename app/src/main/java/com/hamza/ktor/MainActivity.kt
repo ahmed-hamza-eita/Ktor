@@ -19,6 +19,9 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.gson.gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,29 +29,30 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KtorExampleTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-                }
+                sendLetter()
             }
         }
     }
 }
 
 
-fun sendLetter(letter: Letter) {
+fun sendLetter() {
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             gson()
         }
     }
 
-    val response: HttpResponse = client.post("https://jsonplaceholder.typicode.com/posts") {
-        contentType(ContentType.Application.Json)
-        setBody(Letter(1, "I miss you", "How are you?"))
-    }
 
-    println("Ktor Response: ${response.status}")
-    println("Ktor Response: ${response.bodyAsText()}")
+    CoroutineScope(Dispatchers.IO).launch {
+        val response: HttpResponse = client.post("https://jsonplaceholder.typicode.com/posts") {
+            contentType(ContentType.Application.Json)
+            setBody(Letter(1, "I miss you", "How are you?"))
+        }
+
+        println("Ktor Response: ${response.status}")
+        println("Ktor Response: ${response.bodyAsText()}")
+    }
 }
 
 

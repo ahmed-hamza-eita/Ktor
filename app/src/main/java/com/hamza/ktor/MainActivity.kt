@@ -15,6 +15,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.gson.gson
@@ -45,6 +46,9 @@ fun sendLetter(letter: Letter) {
         contentType(ContentType.Application.Json)
         setBody(Letter(1, "I miss you", "How are you?"))
     }
+
+    println("Ktor Response: ${response.status}")
+    println("Ktor Response: ${response.bodyAsText()}")
 }
 
 
